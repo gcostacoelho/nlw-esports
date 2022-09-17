@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors';
+import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import { convertHoursToMinute } from './utils/convertHoursToMinute';
 import { convertMinutesToHours } from './utils/convertMinutesToHours';
@@ -8,9 +8,7 @@ const app = express()
 app.use(express.json());
 app.use(cors())
 
-const prisma = new PrismaClient({
-    log: ['query']
-});
+const prisma = new PrismaClient();
 
 //Criando novas rotas
 app.get('/games', async (request, response) =>{
