@@ -10,6 +10,7 @@ import { styles } from './styles';
 import { THEME } from '../../theme';
 import { Heading } from '../../components/Heading';
 import { DuoCard, DuoCardProps } from '../../components/DuoCard';
+import { DuoMatch } from "../../components/DuoMatch";
 
 import logoImg from '../../assets/logo-nlw-esports.png'
 
@@ -19,10 +20,19 @@ export function Game() {
   const route = useRoute();
   const game = route.params as GameParams;
 
-  const [duo, setDuos] = useState<DuoCardProps[]>([])
+  const [duo, setDuos] = useState<DuoCardProps[]>([]);
+  const [discordDuoSelected, setDiscordDuoSelected] = useState('');
 
 
   function goBack(){ nav.goBack() }
+
+  async function getDiscordUser(adsId:string) {
+    fetch(`http://192.168.1.108:5000/ads/${adsId}/discord`)
+    .then(response => response.json())
+    .then(data => {
+      setDiscordDuoSelected(data.discord)
+    })
+  }
 
   useEffect(()=>{
     fetch(`http://192.168.1.108:5000/games/${game.id}/ads`)
@@ -66,7 +76,7 @@ export function Game() {
           data={duo}
           keyExtractor={item => item.id}
           renderItem={({item}) =>(
-            <DuoCard data={item} onConnect={() => {}}/>
+            <DuoCard data={item} onConnect={() => getDiscordUser(item.id)}/>
           )}
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -77,6 +87,12 @@ export function Game() {
               Não há anúncios publicados para esse jogo ainda
             </Text>
           )}
+        />
+
+        <DuoMatch
+          visible={discordDuoSelected.length > 0}
+          discord={discordDuoSelected}
+          onClose={() => setDiscordDuoSelected('')}
         />
       </SafeAreaView>
     </Background>
