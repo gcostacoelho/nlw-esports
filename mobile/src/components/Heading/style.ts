@@ -3,8 +3,8 @@ import { THEME } from '../../theme';
 
 export const styles = StyleSheet.create({
   container: {
-    flex:1,
-    padding:32
+    flex: 1,
+    padding: 32
   },
   title:{
     color:THEME.COLORS.TEXT,

@@ -16,12 +16,36 @@ interface ButtonProps{
 }
 */
 
-import { MagnifyingGlassPlus } from 'phosphor-react'
+import { useState, useEffect } from "react";
 
 import './styles/main.css';
 import logoImg from './assets/logo.svg';
+import * as Dialog from "@radix-ui/react-dialog";
+import axios from 'axios'
+
+import { GameBanner } from './components/GameBanner';
+import { NewAdBanner } from './components/NewAdBanner';
+import { FormAds } from "./components/FormAds";
+
+interface Game {
+  id: string;
+  title: string
+  banner: string;
+  _count:{ ads: number;}
+}
+
 
 function App() {
+
+  const [games, setGames] = useState<Game[]>([])
+
+  useEffect(() => {
+    axios('http://localhost:5000/games').then(response => {
+      setGames(response.data)
+    });
+  }, [])
+
+
   return (
     <div className='max-w-[1344px] mx-auto flex flex-col items-center my-20'>
       <img src={logoImg} alt="" />
@@ -31,78 +55,36 @@ function App() {
       </h1>
 
       <div className="grid grid-cols-6 gap-6 mt-16">
-        <a href="http://" target="_blank" className='relative rounded-lg overflow-hidden'>
-          <img src="/game1.png" alt=""/>
-
-          <div className='w-full pt-16 pb-4 px-4 bg-game-gradient absolute bottom-0 left-0 right-0'>
-            <strong className='font-bold text-white block'>League of legends</strong>
-            <span className='text-zinc-300 text-sm block'>4 anúncios</span>
-          </div>
-
-        </a>
-
-        <a href="http://" target="_blank" className='relative rounded-lg overflow-hidden'>
-          <img src="/game2.png" alt=""/>
-
-          <div className='w-full pt-16 pb-4 px-4 bg-game-gradient absolute bottom-0 left-0 right-0'>
-            <strong className='font-bold text-white block'>Dota 2</strong>
-            <span className='text-zinc-300 text-sm block'>4 anúncios</span>
-          </div>
-        </a>
-
-        <a href="http://" target="_blank" className='relative rounded-lg overflow-hidden'>
-          <img src="/game3.png" alt=""/>
-
-          <div className='w-full pt-16 pb-4 px-4 bg-game-gradient absolute bottom-0 left-0 right-0'>
-            <strong className='font-bold text-white block'>Counter Strike</strong>
-            <span className='text-zinc-300 text-sm block'>4 anúncios</span>
-          </div>
-        </a>
-
-        <a href="http://" target="_blank" className='relative rounded-lg overflow-hidden'>
-          <img src="/game4.png" alt=""/>
-
-          <div className='w-full pt-16 pb-4 px-4 bg-game-gradient absolute bottom-0 left-0 right-0'>
-            <strong className='font-bold text-white block'>Apex Legends</strong>
-            <span className='text-zinc-300 text-sm block'>4 anúncios</span>
-          </div>
-        </a>
-
-        <a href="http://" target="_blank" className='relative rounded-lg overflow-hidden'>
-          <img src="/game5.png" alt=""/>
-
-          <div className='w-full pt-16 pb-4 px-4 bg-game-gradient absolute bottom-0 left-0 right-0'>
-            <strong className='font-bold text-white block'>Fortnite</strong>
-            <span className='text-zinc-300 text-sm block'>4 anúncios</span>
-          </div>
-        </a>
-
-        <a href="http://" target="_blank" className='relative rounded-lg overflow-hidden'>
-          <img src="/game6.png" alt=""/>
-
-          <div className='w-full pt-16 pb-4 px-4 bg-game-gradient absolute bottom-0 left-0 right-0'>
-            <strong className='font-bold text-white block'>World of Warcraft</strong>
-            <span className='text-zinc-300 text-sm block'>4 anúncios</span>
-          </div>
-        </a>
+        {
+          games.map(game => {
+              return (
+                <GameBanner
+                  key={game.id}
+                  title={game.title} 
+                  bannerUrl={game.banner} 
+                  adsCount={game._count.ads} 
+                />
+              )
+            })
+          }
       </div>
+        
+      <Dialog.Root>
 
-      <div className='pt-1 bg-nlw-gradient self-stretch mt-8 rounded-lg overflow-hidden'>
-        <div className='bg-[#2A2634] px-8 py-6 flex justify-between align-center'>
-          <div>
-            <strong className='text-2xr text-white font-black block'>Não encontrou seu duo?</strong>
-            <span className='text-zinc-400 '>Publique um anúncio para encontrar novos players!</span>
-          </div>
+        <NewAdBanner/>
 
-        <button className='py-3 px-4 bg-violet-500 hover:bg-violet-600 text-white rounded flex items-center gap-3'>
-          <MagnifyingGlassPlus size={24}/>
-          Publicar anúncio
-        </button>
+        <Dialog.Portal>
+          <Dialog.Overlay className="bg-black/60 inset-0 fixed" />
 
+          <Dialog.Content className="fixed bg-[#2A2634] py-8 px-10 text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg w-[480px] shadow-lg shadow-black/25">
+            <Dialog.Title className="text-3xl font-black">Publique um anúncio</Dialog.Title>
 
-        </div>
-      </div>
+            <FormAds/>
 
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+      
     </div>
   )
 }
