@@ -5,8 +5,8 @@ import App from './App'
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  //Componentes do React
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    //Componentes do React
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
 )
